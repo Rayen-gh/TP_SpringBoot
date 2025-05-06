@@ -54,13 +54,21 @@ public class ProduitControlleur {
 
     @RequestMapping("/supprimerProduit")
     public String supprimerProduit(@RequestParam("id") Long id,
-                                   ModelMap modelMap)
+                                   ModelMap modelMap,
+                                   @RequestParam (name="page",defaultValue = "0") int page,
+                                   @RequestParam (name="size", defaultValue = "2") int size)
     {
         produitService.deleteProduitById(id);
-        List<Produit> prods = produitService.getAllProduits();
+        Page<Produit> prods = produitService.getAllProduitsParPage(page,
+                size);
         modelMap.addAttribute("produits", prods);
-        return "listeProduits";
+        modelMap.addAttribute("pages", new int[prods.getTotalPages()]);
+        modelMap.addAttribute("currentPage", page);
+        modelMap.addAttribute("size", size);
+        return "listProduit";
     }
+
+
     @RequestMapping("/modifierProduit")
     public String editerProduit(@RequestParam("id") Long id,
                                 ModelMap modelMap)
